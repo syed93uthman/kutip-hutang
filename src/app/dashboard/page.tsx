@@ -1,16 +1,23 @@
+"use client"
+
+import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
+import { UserForm } from "@/components/user-form"
+import { UserTable } from "@/components/user-list"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-import data from "./data.json"
-
 export default function Page() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const handleUserSuccess = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
+
   return (
     <SidebarProvider
       style={
@@ -25,12 +32,28 @@ export default function Page() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold tracking-tight">Users</h2>
+                  <p className="text-muted-foreground">
+                    Manage users for debt tracking
+                  </p>
+                </div>
+                <UserForm onSuccess={handleUserSuccess} />
               </div>
-              <DataTable data={data} />
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>User List</CardTitle>
+                  <CardDescription>
+                    All users in the system
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <UserTable refreshTrigger={refreshTrigger} />
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
