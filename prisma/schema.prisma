@@ -16,4 +16,50 @@ model User {
   phone     String  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  paidBills    Bill[]            @relation("PaidBills")
+  billItems    BillItem[]
+  settlementsFrom Settlement[]   @relation("FromUserSettlements")
+  settlementsTo   Settlement[]   @relation("ToUserSettlements")
+}
+
+model Bill {
+  id        Int      @id @default(autoincrement())
+  title     String
+  date      DateTime
+  payerId   Int
+  payer     User     @relation("PaidBills", fields: [payerId], references: [id])
+  items     BillItem[]
+  settlements Settlement[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BillItem {
+  id             Int     @id @default(autoincrement())
+  billId         Int
+  bill           Bill    @relation(fields: [billId], references: [id], onDelete: Cascade)
+  description    String
+  amount         Decimal @db.Decimal(10, 2)
+  assignedUserId Int
+  assignedUser   User    @relation(fields: [assignedUserId], references: [id])
+}
+
+model Settlement {
+  id          Int      @id @default(autoincrement())
+  billId      Int
+  bill        Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  fromUserId  Int
+  fromUser    User     @relation("FromUserSettlements", fields: [fromUserId], references: [id])
+  toUserId    Int
+  toUser      User     @relation("ToUserSettlements", fields: [toUserId], references: [id])
+  amount      Decimal  @db.Decimal(10, 2)
+  status      SettlementStatus @default(pending)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum SettlementStatus {
+  pending
+  paid
 }

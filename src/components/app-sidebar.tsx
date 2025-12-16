@@ -45,6 +45,11 @@ const data = {
       url: "/dashboard",
       icon: IconUsers,
     },
+    {
+      title: "Split Bills",
+      url: "/split-bills",
+      icon: IconListDetails,
+    },
   ],
   navClouds: [
     {
